@@ -1,0 +1,17 @@
+project:
+  type: book
+
+book:
+  title: "DEMO-001 Analysis Results"
+  chapters:
+    - index.qmd
+    - analysis/tlf-01-disposition.qmd
+    - analysis/tlf-02-population.qmd
+    - analysis/tlf-03-baseline.qmd
+    - analysis/tlf-04-efficacy-ancova.qmd
+    - analysis/tlf-05-ae-summary.qmd
+    - analysis/tlf-06-specific.qmd
+
+format:
+  html:
+    theme: cosmo

@@ -22,23 +22,27 @@ By using the recommended folder structure and associated development tools, this
 
 ## Installation
 
-1. Clone the repository:
++ Clone the repository:
    ```bash
    git https://github.com/elong0527/demo_py_esub
    cd demo-py-esub
    ```
 
-2. Install uv (if not already installed):
++ Install uv (if not already installed):
    ```bash
    # Follow instructions at: https://pycsr.org/env-uv.html#installing-uv
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
-3. Create and activate the project environment:
++ Create and activate the project environment:
    ```bash
    uv sync
    ```
 
-4. Activate the virtual environment:
++ Activate the virtual environment:
    - **Windows**: `.venv\Scripts\activate`
    - **macOS/Linux**: `source .venv/bin/activate`
+
+## Project 
+
++ Run in batch `quarto render`
