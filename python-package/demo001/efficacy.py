@@ -7,9 +7,9 @@ Functions for performing ANCOVA, summary statistics, and efficacy endpoint analy
 from __future__ import annotations
 
 import polars as pl
-import pandas as pd
 import numpy as np
-import statsmodels.formula.api as smf
+import statsmodels.api as sm
+from patsy import dmatrices, dmatrix
 from scipy import stats as scipy_stats
 
 
@@ -136,27 +136,39 @@ def perform_ancova(data: pl.DataFrame, treatments: list[str]) -> dict[str, any]:
     dict[str, any]
         ANCOVA results including model, LS means, and comparisons
     """
-    # Convert to pandas for statsmodels
-    ancova_df = data.to_pandas()
-    ancova_df["TRTP"] = pd.Categorical(ancova_df["TRTP"], categories=treatments)
+    # Prepare data for patsy
+    data_dict = {
+        "CHG": data["CHG"].to_numpy(),
+        "BASE": data["BASE"].to_numpy(),
+        "TRTP": data["TRTP"].to_numpy(),
+    }
+
+    # Set treatment reference level
+    formula = f"CHG ~ C(TRTP, Treatment(reference='{treatments[0]}')) + BASE"
+
+    # Create design matrices
+    y, X = dmatrices(formula, data=data_dict, return_type="matrix")
 
     # Fit ANCOVA model
-    model = smf.ols("CHG ~ TRTP + BASE", data=ancova_df).fit()
+    model = sm.OLS(y, X).fit()
+
+    # Get coefficient names from design info
+    coef_names = X.design_info.column_names
 
     # Calculate LS means
-    base_mean = ancova_df["BASE"].mean()
-    var_cov = model.cov_params()
+    base_mean = data["BASE"].mean()
     ls_means = []
 
-    for i, trt in enumerate(treatments):
-        # Create prediction vector
-        x_pred = np.array([1, int(i == 1), int(i == 2), base_mean])
+    for trt in treatments:
+        # Create a new data point for prediction
+        new_data = {"TRTP": [trt], "BASE": [base_mean]}
+        # Create the design matrix for the new data point
+        X_pred_patsy = dmatrix(X.design_info, data=new_data, return_type="matrix")
 
-        # Calculate LS mean
-        ls_mean = model.predict(pd.DataFrame({"TRTP": [trt], "BASE": [base_mean]}))[0]
-
-        # Calculate standard error
-        se_pred = np.sqrt(x_pred @ var_cov @ x_pred.T)
+        # Get the prediction
+        prediction = model.get_prediction(X_pred_patsy)
+        ls_mean = prediction.predicted_mean[0]
+        se_pred = prediction.se_mean[0]
 
         ls_means.append(
             {
@@ -171,27 +183,25 @@ def perform_ancova(data: pl.DataFrame, treatments: list[str]) -> dict[str, any]:
     # Pairwise comparisons vs placebo
     comparisons = []
     if len(treatments) > 1:
-        placebo = treatments[0]  # Assume first treatment is placebo
+        placebo = treatments[0]
 
-        for i, trt in enumerate(treatments[1:], 1):
-            coef_name = f"TRTP[T.{trt}]"
-            if coef_name in model.params:
-                coef = model.params[coef_name]
-                se = model.bse[coef_name]
-                t_stat = coef / se
-                df = model.df_resid
-                p_value = 2 * (1 - scipy_stats.t.cdf(abs(t_stat), df))
-
-                ci_lower = coef - scipy_stats.t.ppf(0.975, df) * se
-                ci_upper = coef + scipy_stats.t.ppf(0.975, df) * se
+        for trt in treatments[1:]:
+            coef_name = f"C(TRTP, Treatment(reference='{placebo}'))[T.{trt}]"
+            if coef_name in coef_names:
+                idx = coef_names.index(coef_name)
+                coef = model.params[idx]
+                se = model.bse[idx]
+                t_stat = model.tvalues[idx]
+                p_value = model.pvalues[idx]
+                ci = model.conf_int()[idx]
 
                 comparisons.append(
                     {
                         "Comparison": f"{trt} vs. {placebo}",
                         "Estimate": coef,
                         "SE": se,
-                        "CI_Lower": ci_lower,
-                        "CI_Upper": ci_upper,
+                        "CI_Lower": ci[0],
+                        "CI_Upper": ci[1],
                         "t_stat": t_stat,
                         "p_value": p_value,
                     }
