@@ -23,7 +23,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: '3.13'
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -33,6 +33,10 @@ jobs:
           uv sync
           echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
           echo "$PWD/.venv/bin" >> $GITHUB_PATH
+
+      - name: Install Jupyter kernel
+        run: |
+          .venv/bin/python -m ipykernel install --user --name demo-py-esub --display-name "demo-py-esub"
 
       - name: Clear Quarto Cache
         run: rm -rf .quarto
