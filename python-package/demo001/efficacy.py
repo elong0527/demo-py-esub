@@ -98,16 +98,8 @@ def calculate_descriptive_stats(
                 "N_Analysis": trt_data.height,
                 "Baseline_Mean": float(trt_data["Baseline"].mean()),
                 "Baseline_SD": float(trt_data["Baseline"].std()),
-                "Endpoint_Mean": float(
-                    trt_data.select(pl.col("*").exclude("USUBJID", "TRTP")).columns[2]
-                ).mean()
-                if len(trt_data.columns) > 3
-                else float(trt_data["Week_24_LOCF"].mean()),
-                "Endpoint_SD": float(
-                    trt_data.select(pl.col("*").exclude("USUBJID", "TRTP")).columns[2]
-                ).std()
-                if len(trt_data.columns) > 3
-                else float(trt_data["Week_24_LOCF"].std()),
+                "Endpoint_Mean": float(trt_data["Week_24_LOCF"].mean()),
+                "Endpoint_SD": float(trt_data["Week_24_LOCF"].std()),
                 "Change_Mean": float(trt_data["CHG"].mean()),
                 "Change_SD": float(trt_data["CHG"].std()),
             }

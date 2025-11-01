@@ -11,6 +11,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.getcwd()), 'python-package'))
 
 import polars as pl
+import pandas as pd
 import rtflite as rtf
 
 # Import demo001 package functions
