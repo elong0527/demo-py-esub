@@ -7,6 +7,7 @@ title: "Specific adverse events"
 ```{python}
 import polars as pl
 import rtflite as rtf
+from pathlib import Path # Robust path handling
 ```
 
 ```{python}
@@ -16,8 +17,13 @@ pl.Config.set_tbl_rows(5)
 ```
 
 ```{python}
-adsl = pl.read_parquet("data/adsl.parquet")
-adae = pl.read_parquet("data/adae.parquet")
+# Find the project root by looking for the pyproject.toml file
+project_root = Path.cwd()
+while not (project_root / "pyproject.toml").exists():
+    project_root = project_root.parent
+
+adsl = pl.read_parquet(project_root / "data" / "adsl.parquet")
+adae = pl.read_parquet(project_root / "data" / "adae.parquet")
 treatments = ["Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
 ```
 
@@ -180,6 +186,6 @@ doc_ae_specific = rtf.RTFDocument(
 )
 
 # Generate RTF file
-doc_ae_specific.write_rtf("rtf/tlf_ae_specific.rtf")
+doc_ae_specific.write_rtf(project_root / "output" / "tlf_ae_specific.rtf")
 # RTF file created: rtf/tlf_ae_specific.rtf
 ```

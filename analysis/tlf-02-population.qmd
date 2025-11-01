@@ -5,6 +5,7 @@ title: "Study population"
 ```{python}
 import polars as pl # Data manipulation
 import rtflite as rtf # RTF reporting
+from pathlib import Path # Robust path handling
 ```
 
 ```{python}
@@ -18,7 +19,12 @@ pl.Config.set_tbl_rows(5)
 We start by loading the Subject-level Analysis Dataset (ADSL), which contains population flags for each participant.
 
 ```{python}
-adsl = pl.read_parquet("data/adsl.parquet")
+# Find the project root by looking for the pyproject.toml file
+project_root = Path.cwd()
+while not (project_root / "pyproject.toml").exists():
+    project_root = project_root.parent
+
+adsl = pl.read_parquet(project_root / "data" / "adsl.parquet")
 ```
 
 Let's examine the key population flag variables we'll use:
@@ -200,5 +206,5 @@ doc_overview = rtf.RTFDocument(
     rtf_source=rtf.RTFSource(text=["Source: ADSL dataset"])
 )
 
-doc_overview.write_rtf("rtf/tlf_population.rtf")
+doc_overview.write_rtf(project_root / "output" / "tlf_population.rtf")
 ```

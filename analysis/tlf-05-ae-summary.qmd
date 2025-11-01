@@ -5,6 +5,7 @@ title: "Adverse events summary"
 ```{python}
 import polars as pl
 import rtflite as rtf
+from pathlib import Path # Robust path handling
 ```
 
 ```{python}
@@ -18,9 +19,14 @@ pl.Config.set_tbl_rows(5)
 We need two datasets for AE analysis: the subject-level dataset (ADSL) and the adverse events dataset (ADAE).
 
 ```{python}
+# Find the project root by looking for the pyproject.toml file
+project_root = Path.cwd()
+while not (project_root / "pyproject.toml").exists():
+    project_root = project_root.parent
+
 # Load datasets
-adsl = pl.read_parquet("data/adsl.parquet")
-adae = pl.read_parquet("data/adae.parquet")
+adsl = pl.read_parquet(project_root / "data" / "adsl.parquet")
+adae = pl.read_parquet(project_root / "data" / "adae.parquet")
 
 # Display key variables from ADSL
 adsl.select(["USUBJID", "TRT01A", "SAFFL"])
@@ -303,5 +309,5 @@ doc_ae_summary = rtf.RTFDocument(
     )
 )
 
-doc_ae_summary.write_rtf("rtf/tlf_ae_summary.rtf")
+doc_ae_summary.write_rtf(project_root / "output" / "tlf_ae_summary.rtf")
 ```

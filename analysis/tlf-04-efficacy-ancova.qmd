@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import statsmodels.formula.api as smf
 from scipy import stats as scipy_stats
+from pathlib import Path # Robust path handling
 ```
 
 ```{python}
@@ -20,8 +21,13 @@ pl.Config.set_tbl_rows(5)
 ```
 
 ```{python}
-adsl = pl.read_parquet("data/adsl.parquet")
-adlbc = pl.read_parquet("data/adlbc.parquet")
+# Find the project root by looking for the pyproject.toml file
+project_root = Path.cwd()
+while not (project_root / "pyproject.toml").exists():
+    project_root = project_root.parent
+
+adsl = pl.read_parquet(project_root / "data" / "adsl.parquet")
+adlbc = pl.read_parquet(project_root / "data" / "adlbc.parquet")
 treatments = ["Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
 ```
 
@@ -373,5 +379,5 @@ doc_ancova = rtf.RTFDocument(
 )
 
 # Generate RTF file
-doc_ancova.write_rtf("rtf/tlf_efficacy_ancova.rtf")
+doc_ancova.write_rtf(project_root / "output" / "tlf_efficacy_ancova.rtf")
 ```

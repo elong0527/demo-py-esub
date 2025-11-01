@@ -5,6 +5,7 @@ title: "Baseline characteristics"
 ```{python}
 import polars as pl # Data manipulation
 import rtflite as rtf # RTF reporting
+from pathlib import Path # Robust path handling
 ```
 
 ```{python}
@@ -18,8 +19,13 @@ pl.Config.set_tbl_rows(5)
 We start by loading the Subject-level Analysis Dataset (ADSL) and filtering to the safety population.
 
 ```{python}
+# Find the project root by looking for the pyproject.toml file
+project_root = Path.cwd()
+while not (project_root / "pyproject.toml").exists():
+    project_root = project_root.parent
+
 adsl = (
-    pl.read_parquet("data/adsl.parquet")
+    pl.read_parquet(project_root / "data" / "adsl.parquet")
     .select(["USUBJID", "TRT01P", "AGE", "SEX", "RACE"])
 )
 
@@ -209,5 +215,5 @@ doc_baseline = rtf.RTFDocument(
     rtf_source=rtf.RTFSource(text=["Source: ADSL dataset"])
 )
 
-doc_baseline.write_rtf("rtf/tlf_baseline.rtf") # Save as RTF for submission
+doc_baseline.write_rtf(project_root / "output" / "tlf_baseline.rtf") # Save as RTF for submission
 ```
