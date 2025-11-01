@@ -236,7 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="setup" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">4.1</span> Setup</h2>
-<div id="0b778999" class="cell" data-execution_count="1">
+<div id="16a4369e" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the python-package directory to Python path for demo001 access</span></span>
@@ -256,12 +256,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    format_comparison_table</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="e859185b" class="cell" data-execution_count="2">
+<div id="d83c832f" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>polars.config.Config</code></pre>
 </div>
 </div>
-<div id="a03dfc2f" class="cell" data-execution_count="3">
+<div id="86c9914e" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load data using demo001 utility functions</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>project_root <span class="op">=</span> find_project_root()</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>adsl <span class="op">=</span> load_adam_dataset(<span class="st">"adsl"</span>, project_root)</span>
@@ -272,7 +272,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-1-explore-laboratory-data-structure" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="step-1-explore-laboratory-data-structure"><span class="header-section-number">4.2</span> Step 1: Explore Laboratory Data Structure</h2>
 <p>We start by understanding the glucose data structure and endpoint definitions.</p>
-<div id="1f4e74c3" class="cell" data-execution_count="4">
+<div id="b0c191a7" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display key laboratory variables</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Key ADLBC variables for efficacy analysis</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>lab_vars <span class="op">=</span> adlbc.select([<span class="st">"USUBJID"</span>, <span class="st">"PARAMCD"</span>, <span class="st">"PARAM"</span>, <span class="st">"AVISIT"</span>, <span class="st">"AVISITN"</span>, <span class="st">"AVAL"</span>, <span class="st">"BASE"</span>, <span class="st">"CHG"</span>])</span>
@@ -375,7 +375,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="749f1b3f" class="cell" data-execution_count="5">
+<div id="b2d788dc" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on glucose parameter</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>gluc_visits <span class="op">=</span> adlbc.<span class="bu">filter</span>(pl.col(<span class="st">"PARAMCD"</span>) <span class="op">==</span> <span class="st">"GLUC"</span>).select(<span class="st">"AVISIT"</span>, <span class="st">"AVISITN"</span>).unique().sort(<span class="st">"AVISITN"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Available glucose measurement visits</span></span>
@@ -434,7 +434,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-2-define-analysis-population-and-endpoint" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="step-2-define-analysis-population-and-endpoint"><span class="header-section-number">4.3</span> Step 2: Define Analysis Population and Endpoint</h2>
 <p>Following the Statistical Analysis Plan, we focus on the efficacy population for the primary endpoint.</p>
-<div id="8b27f59a" class="cell" data-execution_count="6">
+<div id="9a3371bf" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean data types and prepare datasets</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>adlbc_clean <span class="op">=</span> adlbc.with_columns([</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    pl.col(c).cast(<span class="bu">str</span>).<span class="bu">str</span>.strip_chars()</span>
@@ -454,7 +454,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>71882</code></pre>
 </div>
 </div>
-<div id="d70e4841" class="cell" data-execution_count="7">
+<div id="cea188af" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examine glucose data availability by visit and treatment</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>gluc_availability <span class="op">=</span> (</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    adlbc_eff.<span class="bu">filter</span>(pl.col(<span class="st">"PARAMCD"</span>) <span class="op">==</span> <span class="st">"GLUC"</span>)</span>
@@ -526,7 +526,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-3-implement-locf-imputation-strategy" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="step-3-implement-locf-imputation-strategy"><span class="header-section-number">4.4</span> Step 3: Implement LOCF Imputation Strategy</h2>
 <p>We apply Last Observation Carried Forward (LOCF) for missing Week 24 glucose values using the demo001 efficacy functions.</p>
-<div id="328cb7ef" class="cell" data-execution_count="8">
+<div id="fac57423" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare glucose data with LOCF using demo001 function</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>gluc_data <span class="op">=</span> prepare_locf_data(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    adlbc<span class="op">=</span>adlbc_eff,</span>
@@ -629,7 +629,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="1904c366" class="cell" data-execution_count="9">
+<div id="c1483265" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assess LOCF imputation impact</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>locf_summary <span class="op">=</span> (</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    gluc_data</span>
@@ -701,7 +701,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-4-calculate-descriptive-statistics" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="step-4-calculate-descriptive-statistics"><span class="header-section-number">4.5</span> Step 4: Calculate Descriptive Statistics</h2>
 <p>We compute baseline, Week 24, and change from baseline statistics by treatment group using demo001 functions.</p>
-<div id="121358e2" class="cell" data-execution_count="10">
+<div id="06f5d410" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate comprehensive descriptive statistics using demo001 function</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>desc_stats <span class="op">=</span> calculate_descriptive_stats(gluc_data, treatments)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -781,7 +781,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-5-perform-ancova-analysis" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="step-5-perform-ancova-analysis"><span class="header-section-number">4.6</span> Step 5: Perform ANCOVA Analysis</h2>
 <p>We fit the ANCOVA model with treatment and baseline glucose as covariates using demo001 functions.</p>
-<div id="92a7a951" class="cell" data-execution_count="11">
+<div id="ec79905a" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform ANCOVA analysis using demo001 function</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ancova_results <span class="op">=</span> perform_ancova(gluc_data, treatments)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -858,7 +858,7 @@ F-statistic: 26.04, p-value: 0.0000</code></pre>
 <section id="step-6-pairwise-treatment-comparisons" class="level2" data-number="4.7">
 <h2 data-number="4.7" class="anchored" data-anchor-id="step-6-pairwise-treatment-comparisons"><span class="header-section-number">4.7</span> Step 6: Pairwise Treatment Comparisons</h2>
 <p>We calculate treatment differences and their statistical significance (already calculated in the ANCOVA results).</p>
-<div id="5f56d555" class="cell" data-execution_count="12">
+<div id="bd22d19f" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display comparison results from ANCOVA</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>comparison_df <span class="op">=</span> pl.DataFrame(comparisons)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>comparison_df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -920,7 +920,7 @@ F-statistic: 26.04, p-value: 0.0000</code></pre>
 <section id="step-7-prepare-tables-for-rtf-output" class="level2" data-number="4.8">
 <h2 data-number="4.8" class="anchored" data-anchor-id="step-7-prepare-tables-for-rtf-output"><span class="header-section-number">4.8</span> Step 7: Prepare Tables for RTF Output</h2>
 <p>We format the analysis results into publication-ready tables using demo001 functions.</p>
-<div id="9d76a733" class="cell" data-execution_count="13">
+<div id="a482572a" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Format efficacy table using demo001 function</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>tbl1 <span class="op">=</span> format_efficacy_table(desc_stats, ls_means)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>tbl1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -992,7 +992,7 @@ F-statistic: 26.04, p-value: 0.0000</code></pre>
 </div>
 </div>
 </div>
-<div id="0c33a489" class="cell" data-execution_count="14">
+<div id="52376297" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Format comparison table using demo001 function</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>tbl2 <span class="op">=</span> format_comparison_table(comparisons)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>tbl2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1038,7 +1038,7 @@ F-statistic: 26.04, p-value: 0.0000</code></pre>
 <section id="step-8-create-regulatory-compliant-rtf-document" class="level2" data-number="4.9">
 <h2 data-number="4.9" class="anchored" data-anchor-id="step-8-create-regulatory-compliant-rtf-document"><span class="header-section-number">4.9</span> Step 8: Create Regulatory-Compliant RTF Document</h2>
 <p>We generate a comprehensive efficacy table following regulatory submission standards.</p>
-<div id="559b4e95" class="cell" data-execution_count="15">
+<div id="e5404bde" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create comprehensive RTF document with multiple table sections</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>doc_ancova <span class="op">=</span> rtf.RTFDocument(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    df<span class="op">=</span>[tbl1, tbl2],</span>
@@ -1119,7 +1119,7 @@ F-statistic: 26.04, p-value: 0.0000</code></pre>
 <span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate RTF file</span></span>
 <span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a>doc_ancova.write_rtf(project_root <span class="op">/</span> <span class="st">"output"</span> <span class="op">/</span> <span class="st">"tlf_efficacy_ancova.rtf"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>/home/runner/work/demo_py_esub/demo_py_esub/output/tlf_efficacy_ancova.rtf</code></pre>
+<pre><code>/home/runner/work/demo-py-esub/demo-py-esub/output/tlf_efficacy_ancova.rtf</code></pre>
 </div>
 </div>
 
