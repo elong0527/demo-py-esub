@@ -7,7 +7,10 @@ title: "Specific adverse events"
 ```{python}
 import polars as pl
 import rtflite as rtf
-from pathlib import Path # Robust path handling
+
+# Import demo001 package functions
+from demo001 import find_project_root, load_adam_dataset
+from demo001.safety import create_ae_by_soc_table
 ```
 
 ```{python}
@@ -17,13 +20,10 @@ pl.Config.set_tbl_rows(5)
 ```
 
 ```{python}
-# Find the project root by looking for the pyproject.toml file
-project_root = Path.cwd()
-while not (project_root / "pyproject.toml").exists():
-    project_root = project_root.parent
-
-adsl = pl.read_parquet(project_root / "data" / "adsl.parquet")
-adae = pl.read_parquet(project_root / "data" / "adae.parquet")
+# Load data using demo001 utility functions
+project_root = find_project_root()
+adsl = load_adam_dataset("adsl", project_root)
+adae = load_adam_dataset("adae", project_root)
 treatments = ["Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
 ```
 
@@ -76,72 +76,15 @@ adae_safety.height
 We standardize the adverse event terms and prepare the hierarchical data structure.
 
 ```{python}
-# Standardize AE term formatting for consistency
-ae_counts = (
-    adae_safety
-    .with_columns([
-        pl.col("AEDECOD").str.to_titlecase().alias("AEDECOD_STD"),
-        pl.col("AEBODSYS").str.to_titlecase().alias("AEBODSYS_STD")
-    ])
-    .group_by(["TRT01A", "AEBODSYS_STD", "AEDECOD_STD"])
-    .agg(n=pl.col("USUBJID").n_unique())
-    .sort(["AEBODSYS_STD", "AEDECOD_STD", "TRT01A"])
-)
+# Create hierarchical AE table using demo001 safety functions
+df_ae_specific = create_ae_by_soc_table(adae_safety, pop_counts, treatments)
 
-# Sample of prepared AE counts
-ae_counts
-```
-
-## Step 4: Build Hierarchical Table Structure
-
-We create a nested table structure with SOC headers and indented specific terms.
-
-```{python}
-# Initialize table with population counts
-table_data = [
-    ["Participants in population"] + [
-        str(pop_counts.filter(pl.col("TRT01A") == t)["N"][0])
-        for t in treatments
-    ],
-    [""] * 4  # Blank separator row
-]
-
-# Build hierarchical structure: SOC -> Specific AE terms
-for soc in ae_counts["AEBODSYS_STD"].unique().sort():
-    # Add SOC header row (bold formatting will be applied later)
-    table_data.append([soc] + [""] * 3)
-
-    # Get all AE terms within this SOC
-    soc_data = ae_counts.filter(pl.col("AEBODSYS_STD") == soc)
-
-    # Add each specific AE term with counts
-    for ae_term in soc_data["AEDECOD_STD"].unique().sort():
-        row = [f"  {ae_term}"]  # Indent specific terms
-
-        # Add counts for each treatment group
-        for trt in treatments:
-            count_data = soc_data.filter(
-                (pl.col("AEDECOD_STD") == ae_term) &
-                (pl.col("TRT01A") == trt)
-            )
-            count = count_data["n"][0] if count_data.height > 0 else 0
-            row.append(str(count))
-
-        table_data.append(row)
-
-# Convert to Polars DataFrame
-df_ae_specific = pl.DataFrame(
-    table_data,
-    schema=[""] + treatments,
-    orient="row"
-)
-
-# Final table structure
+# Display the table structure
 df_ae_specific.shape
 df_ae_specific
 ```
 
-## Step 5: Create Regulatory-Compliant RTF Output
+## Step 4: Create Regulatory-Compliant RTF Output
 
 We format the table following regulatory submission standards with proper hierarchy and formatting.
 

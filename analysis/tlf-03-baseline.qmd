@@ -5,7 +5,10 @@ title: "Baseline characteristics"
 ```{python}
 import polars as pl # Data manipulation
 import rtflite as rtf # RTF reporting
-from pathlib import Path # Robust path handling
+
+# Import demo001 package functions
+from demo001 import find_project_root, load_adam_dataset
+from demo001.baseline import create_baseline_table
 ```
 
 ```{python}
@@ -19,167 +22,38 @@ pl.Config.set_tbl_rows(5)
 We start by loading the Subject-level Analysis Dataset (ADSL) and filtering to the safety population.
 
 ```{python}
-# Find the project root by looking for the pyproject.toml file
-project_root = Path.cwd()
-while not (project_root / "pyproject.toml").exists():
-    project_root = project_root.parent
-
+# Load data using demo001 utility functions
+project_root = find_project_root()
 adsl = (
-    pl.read_parquet(project_root / "data" / "adsl.parquet")
+    load_adam_dataset("adsl", project_root)
     .select(["USUBJID", "TRT01P", "AGE", "SEX", "RACE"])
 )
 
 adsl
 ```
 
-## Step 2: Calculate Summary Statistics
+## Step 2: Create Baseline Characteristics Table
 
-We'll create separate functions to handle continuous and categorical variables.
-
-### Continuous Variables (Age)
-
-For continuous variables, we calculate mean (SD) and median [min, max].
+Using the demo001 package, we create a comprehensive baseline characteristics table with both continuous and categorical variables.
 
 ```{python}
-def summarize_continuous(df, var):
-    """Calculate summary statistics for continuous variables"""
-    return df.group_by("TRT01P").agg([
-        pl.col(var).mean().round(1).alias("mean"),
-        pl.col(var).std().round(2).alias("sd"),
-        pl.col(var).median().alias("median"),
-        pl.col(var).min().alias("min"),
-        pl.col(var).max().alias("max"),
-        pl.len().alias("n")
-    ])
+# Define variables to include in baseline table
+continuous_vars = ["AGE"]
+categorical_vars = ["SEX", "RACE"]
+treatments = ["Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
 
-age_stats = summarize_continuous(adsl, "AGE")
-age_stats
-```
-
-### Categorical Variables (Sex, Race)
-
-For categorical variables, we calculate counts and percentages.
-
-```{python}
-def summarize_categorical(df, var):
-    """Calculate counts and percentages for categorical variables"""
-    # Get counts by treatment and category
-    counts = df.group_by(["TRT01P", var]).len()
-
-    # Get treatment totals for percentage calculations
-    totals = df.group_by("TRT01P").len().rename({"len": "total"})
-
-    # Calculate percentages
-    result = counts.join(totals, on="TRT01P").with_columns([
-        (100.0 * pl.col("len") / pl.col("total")).round(1).alias("pct")
-    ])
-
-    return result
-
-sex_stats = summarize_categorical(adsl, "SEX")
-sex_stats
-```
-
-```{python}
-race_stats = summarize_categorical(adsl, "RACE")
-race_stats
-```
-
-## Step 3: Format Results
-
-Now we format the statistics into the standard baseline table format.
-
-### Format Age Statistics
-
-```{python}
-# Format age as "Mean (SD)" and "Median [Min, Max]"
-age_formatted = age_stats.with_columns([
-    pl.format("{} ({})", pl.col("mean"), pl.col("sd")).alias("mean_sd"),
-    pl.format("{} [{}, {}]", pl.col("median"), pl.col("min"), pl.col("max")).alias("median_range")
-]).select(["TRT01P", "mean_sd", "median_range"])
-
-age_formatted
-```
-
-### Format Categorical Statistics
-
-```{python}
-# Format categorical as "n (%)"
-sex_formatted = sex_stats.with_columns(
-    pl.format("{} ({}%)", pl.col("len"), pl.col("pct")).alias("n_pct")
-).select(["TRT01P", "SEX", "n_pct"])
-
-race_formatted = race_stats.with_columns(
-    pl.format("{} ({}%)", pl.col("len"), pl.col("pct")).alias("n_pct")
-).select(["TRT01P", "RACE", "n_pct"])
-
-sex_formatted
-```
-
-## Step 4: Create Table Structure
-
-We'll build the table row by row following the standard baseline table format.
-
-```{python}
-# Helper function to get value for a treatment group
-def get_value(df, treatment):
-    """Get value for a specific treatment group or return default"""
-    result = df.filter(pl.col("TRT01P") == treatment)
-    return result[result.columns[-1]][0] if result.height > 0 else "0 (0.0%)"
-
-# Build the baseline table structure
-table_rows = []
-
-# Age section
-table_rows.append(["Age (years)", "", "", ""])
-
-# Age Mean (SD) row
-age_mean_row = ["  Mean (SD)"] + [
-    get_value(age_formatted.select(["TRT01P", "mean_sd"]), trt).replace("0 (0.0%)", "")
-    for trt in ["Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
-]
-table_rows.append(age_mean_row)
-
-# Age Median [Min, Max] row
-age_median_row = ["  Median [Min, Max]"] + [
-    get_value(age_formatted.select(["TRT01P", "median_range"]), trt).replace("0 (0.0%)", "")
-    for trt in ["Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
-]
-table_rows.append(age_median_row)
-
-# Sex section
-table_rows.append(["Sex", "", "", ""])
-
-for sex_cat in ["Female", "Male"]:
-    sex_data = sex_formatted.filter(pl.col("SEX") == sex_cat)
-    sex_row = [f"  {sex_cat}"] + [
-        get_value(sex_data, trt)
-        for trt in ["Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
-    ]
-    table_rows.append(sex_row)
-
-# Race section
-table_rows.append(["Race", "", "", ""])
-
-for race_cat in ["White", "Black Or African American", "American Indian Or Alaska Native"]:
-    race_data = race_formatted.filter(pl.col("RACE") == race_cat)
-    race_row = [f"  {race_cat}"] + [
-        get_value(race_data, trt)
-        for trt in ["Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
-    ]
-    table_rows.append(race_row)
-
-# Create DataFrame from table rows
-baseline_table = pl.DataFrame(
-    table_rows,
-    schema=["Characteristic", "Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"],
-    orient="row"
+# Create baseline table using demo001 functions
+baseline_table = create_baseline_table(
+    adsl=adsl,
+    continuous_vars=continuous_vars,
+    categorical_vars=categorical_vars,
+    treatments=treatments
 )
 
 baseline_table
 ```
 
-## Step 5: Generate Publication-Ready Output
+## Step 3: Generate Publication-Ready Output
 
 Finally, we format the baseline table for regulatory submission using the `rtflite` package.
 
@@ -215,5 +89,5 @@ doc_baseline = rtf.RTFDocument(
     rtf_source=rtf.RTFSource(text=["Source: ADSL dataset"])
 )
 
-doc_baseline.write_rtf(project_root / "output" / "tlf_baseline.rtf") # Save as RTF for submission
+doc_baseline.write_rtf(project_root / "output" / "tlf_baseline.rtf")
 ```

@@ -5,7 +5,9 @@ title: "Disposition of participants"
 ```{python}
 import polars as pl # Manipulate data
 import rtflite as rtf # Reporting in RTF format
-from pathlib import Path # Robust path handling
+
+# Import demo001 package functions
+from demo001 import find_project_root, load_adam_dataset
 ```
 
 ```{python}
@@ -21,12 +23,9 @@ We start by loading the Subject-level Analysis Dataset (ADSL), which contains al
 The ADSL dataset stores participant-level information including treatment assignments and study completion status. We're using the `parquet` format for data storage.
 
 ```{python}
-# Find the project root by looking for the pyproject.toml file
-project_root = Path.cwd()
-while not (project_root / "pyproject.toml").exists():
-    project_root = project_root.parent
-
-adsl = pl.read_parquet(project_root / "data" / "adsl.parquet")
+# Load data using demo001 utility functions
+project_root = find_project_root()
+adsl = load_adam_dataset("adsl", project_root)
 ```
 
 
@@ -217,5 +216,5 @@ doc_disp = rtf.RTFDocument(
     rtf_source=rtf.RTFSource(text=["Source: ADSL dataset"]) # Required source attribution
 )
 
-doc_disp.write_rtf(project_root / "output" / "tlf_disposition.rtf")  # Save as RTF for submission
+doc_disp.write_rtf(project_root / "output" / "tlf_disposition.rtf")
 ```

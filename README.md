@@ -33,7 +33,7 @@ This project follows a standardized folder structure for clinical study reports 
 
 - `.venv/`: Virtual environment (created by uv)
 - `.python-version`: Python version specification
-- `python-package/`: Project-specific Python functions
+- `python-package/demo001/`: DEMO-001 study-specific Python package
 - `_book/`: Rendered Quarto book output
 - `.gitignore`: Git ignore patterns
 
@@ -57,7 +57,14 @@ demo-py-esub/
 │   ├── adae.parquet
 │   └── adlbc.parquet
 ├── output/                 # Generated TLF outputs
-└── python-package/         # Project-specific functions
+└── python-package/         # Clinical biostatistics package
+    └── demo001/
+        ├── __init__.py     # Package initialization
+        ├── utils.py        # Utility functions
+        ├── population.py   # Population analysis functions
+        ├── baseline.py     # Baseline characteristics functions
+        ├── safety.py       # Safety analysis functions
+        └── efficacy.py     # Efficacy analysis functions
 ```
 
 ### Key Goals of This Structure
@@ -67,11 +74,29 @@ demo-py-esub/
 - **Reproducibility**: Isolated environments and locked dependencies
 - **Compliance**: Follows regulatory submission best practices
 
+### Benefits of This Approach
+
+- **Code Reusability**: Functions can be used across multiple analyses
+- **Standardization**: Consistent methodology across studies
+- **Quality Assurance**: Centralized, tested functions reduce errors
+- **Regulatory Compliance**: Standardized approaches for submissions
+- **Maintainability**: Easy to update and improve functions
+
 ## Usage
 
-Run the analysis in batch mode:
+### Install the Package
 ```bash
+# Install in development mode
+uv pip install -e .
+```
+
+### Run Analysis
+```bash
+# Render all analysis reports
 quarto render
+
+# Or render individual files
+quarto render analysis/tlf-01-disposition.qmd
 ```
 
 ## Requirements

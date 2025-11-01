@@ -5,7 +5,10 @@ title: "Adverse events summary"
 ```{python}
 import polars as pl
 import rtflite as rtf
-from pathlib import Path # Robust path handling
+
+# Import demo001 package functions
+from demo001 import find_project_root, load_adam_dataset
+from demo001.safety import create_ae_summary, format_ae_summary
 ```
 
 ```{python}
@@ -19,14 +22,10 @@ pl.Config.set_tbl_rows(5)
 We need two datasets for AE analysis: the subject-level dataset (ADSL) and the adverse events dataset (ADAE).
 
 ```{python}
-# Find the project root by looking for the pyproject.toml file
-project_root = Path.cwd()
-while not (project_root / "pyproject.toml").exists():
-    project_root = project_root.parent
-
-# Load datasets
-adsl = pl.read_parquet(project_root / "data" / "adsl.parquet")
-adae = pl.read_parquet(project_root / "data" / "adae.parquet")
+# Load data using demo001 utility functions
+project_root = find_project_root()
+adsl = load_adam_dataset("adsl", project_root)
+adae = load_adam_dataset("adae", project_root)
 
 # Display key variables from ADSL
 adsl.select(["USUBJID", "TRT01A", "SAFFL"])
@@ -78,142 +77,27 @@ adae_safety.height
 We'll calculate participant counts for standard AE categories used in regulatory submissions.
 
 ```{python}
-def count_participants(df, condition=None):
-    """
-    Count unique participants meeting a condition
+# Create AE summary using demo001 safety functions
+ae_summary = create_ae_summary(adae_safety, pop_counts, treatment_levels)
 
-    Args:
-        df: DataFrame with adverse events
-        condition: polars expression for filtering (None = count all)
-
-    Returns:
-        DataFrame with counts by treatment
-    """
-    if condition is not None:
-        df = df.filter(condition)
-
-    counts = df.group_by("TRT01A").agg(
-        n = pl.col("USUBJID").n_unique()
-    )
-
-    return treatment_levels.join(counts, on="TRT01A", how="left").with_columns(
-        pl.col("n").fill_null(0)
-    )
-
-# Calculate each category
-categories = []
-
-# 1. Participants in population (no filtering)
-pop_row = pop_counts.with_columns(
-    category = pl.lit("Participants in population")
-).rename({"N": "n"})
-categories.append(pop_row)
-
-# 2. With any adverse event
-any_ae = count_participants(adae_safety).with_columns(
-    category = pl.lit("With any adverse event")
-)
-categories.append(any_ae)
-```
-
-```{python}
-# 3. With drug-related adverse event
-drug_related = count_participants(
-    adae_safety,
-    pl.col("AEREL").is_in(["POSSIBLE", "PROBABLE", "DEFINITE", "RELATED"])
-).with_columns(
-    category = pl.lit("With drug-related adverse event")
-)
-categories.append(drug_related)
-
-# 4. With serious adverse event
-serious = count_participants(
-    adae_safety,
-    pl.col("AESER") == "Y"
-).with_columns(
-    category = pl.lit("With serious adverse event")
-)
-categories.append(serious)
-```
-
-```{python}
-# 5. With serious drug-related adverse event
-serious_drug_related = count_participants(
-    adae_safety,
-    (pl.col("AESER") == "Y") &
-    pl.col("AEREL").is_in(["POSSIBLE", "PROBABLE", "DEFINITE", "RELATED"])
-).with_columns(
-    category = pl.lit("With serious drug-related adverse event")
-)
-categories.append(serious_drug_related)
-
-# 6. Who died
-deaths = count_participants(
-    adae_safety,
-    pl.col("AEOUT") == "FATAL"
-).with_columns(
-    category = pl.lit("Who died")
-)
-categories.append(deaths)
-
-# 7. Discontinued due to adverse event
-discontinued = count_participants(
-    adae_safety,
-    pl.col("AEACN") == "DRUG WITHDRAWN"
-).with_columns(
-    category = pl.lit("Discontinued due to adverse event")
-)
-categories.append(discontinued)
-```
-
-## Step 4: Combine and Calculate Percentages
-
-Now we combine all categories and calculate percentages based on the safety population.
-
-```{python}
-# Combine all categories
-ae_summary = pl.concat(categories, how="diagonal")
-
-# Add population totals and calculate percentages
-ae_summary = ae_summary.join(
-    pop_counts.select(["TRT01A", "N"]),
-    on="TRT01A",
-    how="left"
-).with_columns([
-    # Fill missing counts with 0
-    pl.col("n").fill_null(0),
-    # Calculate percentage
-    pl.when(pl.col("category") == "Participants in population")
-        .then(None)  # No percentage for population row
-        .otherwise((100.0 * pl.col("n") / pl.col("N")).round(1))
-        .alias("pct")
-])
-
+# Display the raw summary
 ae_summary.sort(["category", "TRT01A"])
 ```
 
-## Step 5: Format for Display
 
-We'll format the counts and percentages for the final table display.
+
+## Step 4: Format for Display
+
+We format the AE summary with percentages for the final table display.
 
 ```{python}
-# Format display values
-ae_formatted = ae_summary.with_columns([
-    # Show counts as strings, including zeros
-    pl.col("n").cast(str).alias("n_display"),
-    # Format percentages with parentheses; blank out population row
-    pl.when(pl.col("category") == "Participants in population")
-      .then(pl.lit(""))
-      .otherwise(
-          pl.format("({})", pl.col("pct").fill_null(0).round(1).cast(str))
-      )
-      .alias("pct_display")
-])
+# Format the AE summary using demo001 safety functions
+ae_formatted = format_ae_summary(ae_summary, pop_counts)
 
 ae_formatted.select(["category", "TRT01A", "n_display", "pct_display"])
 ```
 
-## Step 6: Create Final Table Structure
+## Step 5: Create Final Table Structure
 
 We reshape the data to create the final table with treatments as columns.
 

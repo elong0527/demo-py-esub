@@ -5,7 +5,10 @@ title: "Study population"
 ```{python}
 import polars as pl # Data manipulation
 import rtflite as rtf # RTF reporting
-from pathlib import Path # Robust path handling
+
+# Import demo001 package functions
+from demo001 import find_project_root, load_adam_dataset
+from demo001.population import create_population_summary, format_population_table
 ```
 
 ```{python}
@@ -19,12 +22,9 @@ pl.Config.set_tbl_rows(5)
 We start by loading the Subject-level Analysis Dataset (ADSL), which contains population flags for each participant.
 
 ```{python}
-# Find the project root by looking for the pyproject.toml file
-project_root = Path.cwd()
-while not (project_root / "pyproject.toml").exists():
-    project_root = project_root.parent
-
-adsl = pl.read_parquet(project_root / "data" / "adsl.parquet")
+# Load data using demo001 utility functions
+project_root = find_project_root()
+adsl = load_adam_dataset("adsl", project_root)
 ```
 
 Let's examine the key population flag variables we'll use:
@@ -39,152 +39,37 @@ Let's examine the key population flag variables we'll use:
 adsl.select(["USUBJID", "TRT01P", "ITTFL", "EFFFL", "SAFFL"])
 ```
 
-## Step 2: Calculate Treatment Group Totals
+## Step 2: Create Population Summary
 
-First, we calculate the total number of randomized participants in each treatment group, which will serve as the denominator for percentage calculations.
+Using the demo001 package, we create a comprehensive population summary with all standard analysis populations.
 
 ```{python}
-totals = adsl.group_by("TRT01P").agg(
-    total = pl.len()
-)
-
+# Calculate treatment group totals
+totals = adsl.group_by("TRT01P").agg(total=pl.len())
 totals
 ```
 
-## Step 3: Define Helper Function
-
-We create a reusable function to count participants by treatment group for any population subset.
-
 ```{python}
-def count_by_treatment(data, population_name):
-    """Count participants by treatment group and add population label"""
-    return data.group_by("TRT01P").agg(
-        n = pl.len()
-    ).with_columns(
-        population = pl.lit(population_name)
-    )
+# Create population summary using demo001 functions
+pop_summary = create_population_summary(adsl)
+pop_summary
 ```
 
-## Step 4: Count Each Population
+## Step 3: Format Population Table
 
-Now we calculate participant counts for each analysis population.
-
-### All Randomized Participants
+We format the population summary with percentages for regulatory reporting.
 
 ```{python}
-pop_all = count_by_treatment(
-    data=adsl,
-    population_name="Participants in population"
-)
-
-pop_all
-```
-
-### Intent-to-Treat Population
-
-```{python}
-adsl_itt = adsl.filter(pl.col("ITTFL") == "Y")
-pop_itt = count_by_treatment(
-    data=adsl_itt,
-    population_name="Participants included in ITT population"
-)
-
-pop_itt
-```
-
-### Efficacy Population
-
-```{python}
-adsl_eff = adsl.filter(pl.col("EFFFL") == "Y")
-pop_eff = count_by_treatment(
-    data=adsl_eff,
-    population_name="Participants included in efficacy population"
-)
-
-pop_eff
-```
-
-### Safety Population
-
-```{python}
-adsl_saf = adsl.filter(pl.col("SAFFL") == "Y")
-pop_saf = count_by_treatment(
-    data=adsl_saf,
-    population_name="Participants included in safety population"
-)
-
-pop_saf
-```
-
-## Step 5: Combine All Populations
-
-We stack all population counts together into a single dataset.
-
-```{python}
-all_populations = pl.concat([
-    pop_all,
-    pop_itt,
-    pop_eff,
-    pop_saf
-])
-
-all_populations
-```
-
-## Step 6: Calculate Percentages
-
-We join with the total counts and calculate what percentage each population represents of the total randomized participants.
-
-```{python}
-stats_with_pct = all_populations.join(
-    totals,
-    on="TRT01P"
-).with_columns(
-    pct = (100.0 * pl.col("n") / pl.col("total")).round(1)
-)
-
-stats_with_pct
-```
-
-## Step 7: Format Display Values
-
-For the final table, we format the display text. The total randomized count shows just "N", while subset populations show "N (%)".
-
-```{python}
-formatted_stats = stats_with_pct.with_columns(
-    display = pl.when(pl.col("population") == "Participants in population")
-        .then(pl.col("n").cast(str)) 
-        .otherwise(
-            pl.concat_str([ 
-                pl.col("n").cast(str),
-                pl.lit(" ("),
-                pl.col("pct").round(1).cast(str),
-                pl.lit(")")
-            ])
-        )
-)
-
-formatted_stats
-```
-
-## Step 8: Create Final Table
-
-We reshape the data from long format (rows for each treatment-population combination) to wide format (columns for each treatment group).
-
-```{python}
-df_overview = formatted_stats.pivot(
-    values="display",
-    index="population",
-    on="TRT01P",
-    maintain_order=True
-).select(
+# Format the population table with percentages
+df_overview = format_population_table(pop_summary, totals)
+df_overview = df_overview.select(
     ["population", "Placebo", "Xanomeline Low Dose", "Xanomeline High Dose"]
 )
 
 df_overview
 ```
 
-## Step 9: Generate Publication-Ready Output
+## Step 4: Generate Publication-Ready Output
 
 Finally, we format the population table for regulatory submission using the `rtflite` package.
 
