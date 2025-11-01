@@ -1,0 +1,18 @@
+[project]
+name = "demo-py-esub"
+version = "0.1.0"
+description = "A demo project to illustrate how to organize analysis scripts using Python in a recommended folder structure."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "plotnine>=0.15.1",
+    "polars>=1.35.1",
+    "rtflite>=1.0.2",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "pytest>=8.4.2",
+    "ruff>=0.14.3",
+]
