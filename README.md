@@ -108,7 +108,7 @@ quarto render analysis/tlf-01-disposition.qmd
 
 + Clone the repository:
    ```bash
-   git https://github.com/elong0527/demo_py_esub
+   git https://github.com/elong0527/demo-py-esub
    cd demo-py-esub
    ```
 
