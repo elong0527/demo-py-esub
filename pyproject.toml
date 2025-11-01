@@ -5,6 +5,7 @@ description = "A demo project to illustrate how to organize analysis scripts usi
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "jupyter>=1.1.1",
     "plotnine>=0.15.1",
     "polars>=1.35.1",
     "rtflite>=1.0.2",
