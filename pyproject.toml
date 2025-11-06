@@ -1,7 +1,7 @@
 [project]
-name = "demo-py-esub"
+name = "demo001"
 version = "0.1.0"
-description = "A demo project to illustrate how to organize analysis scripts using Python in a recommended folder structure."
+description = "A demo project to illustrate how to organize analysis scripts in a Python package following the Python Packaging User Guide."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -23,12 +23,5 @@ dev = [
 ]
 
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-where = ["python-package"]
-include = ["demo001*"]
-
-[tool.setuptools.package-dir]
-"" = "python-package"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

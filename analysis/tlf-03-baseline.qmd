@@ -3,15 +3,9 @@ title: "Baseline characteristics"
 ---
 
 ```{python}
-import sys
-import os
-# Add the python-package directory to Python path for demo001 access
-sys.path.insert(0, os.path.join(os.path.dirname(os.getcwd()), 'python-package'))
+import polars as pl
+import rtflite as rtf
 
-import polars as pl # Data manipulation
-import rtflite as rtf # RTF reporting
-
-# Import demo001 package functions
 from demo001 import find_project_root, load_adam_dataset
 from demo001.baseline import create_baseline_table
 ```
