@@ -23,7 +23,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 Clone the repository:
 
 ```bash
-git https://github.com/elong0527/demo-py-esub
+git clone https://github.com/elong0527/demo-py-esub
 cd demo-py-esub
 ```
 
