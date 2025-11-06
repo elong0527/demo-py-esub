@@ -6,6 +6,7 @@
 in a Python package for clinical study reports and regulatory submissions,
 while following the packaging best practices such as the
 [Python Packaging User Guide](https://packaging.python.org/).
+This is inherently a Python package, but also contains a Quarto book project.
 
 This demo project follows the concepts discussed in
 [Python for Clinical Study Reports and Submission](https://pycsr.org).
@@ -66,18 +67,20 @@ and regulatory submissions:
 - `pyproject.toml`: Python project metadata and dependencies
 - `src/demo001/`: Source code for the DEMO-001 study-specific package
 - `tests/`: Unit tests for the package
-- `data/`: ADaM datasets in Parquet format
-- `output/`: Generated tables, listings, and figures (TLF)
+
 - `_quarto.yml`: Quarto book configuration
 - `index.qmd`: Quarto book landing page
+- `data/`: ADaM datasets in Parquet format
 - `analysis/`: Analysis scripts using Quarto Markdown
+- `output/`: Generated tables, listings, and figures (TLF)
 
-### Additional folders and files
+### Miscellaneous files and folders
 
 - `.gitignore`: Ignore patterns for version control
 - `.python-version`: Python version specification (created by uv)
 - `uv.lock`: Lock file for reproducible environments (created by uv)
 - `.venv/`: Virtual environment (created by uv)
+
 - `_book/`: Rendered Quarto book output
 
 ### Project structure
@@ -86,7 +89,7 @@ and regulatory submissions:
 demo-py-esub/
 ├── README.md               # Project overview
 ├── _quarto.yml             # Quarto project configuration
-├── index.qmd               # Quarto book homepage
+├── index.qmd               # Quarto book landing page
 ├── pyproject.toml          # Project configuration and dependencies
 ├── uv.lock                 # Dependency lock file
 ├── analysis/               # Analysis documents
@@ -133,11 +136,3 @@ this project demonstrates:
 - **Automation**: Automated testing and code quality checks
 - **Reproducibility**: Isolated environment management with uv
 - **Compliance**: Best practices for regulatory submissions
-
-Benefits of this approach:
-
-- **Code reusability**: Functions can be used across multiple analyses
-- **Standardization**: Consistent methodology across studies
-- **Quality assurance**: Centralized, tested functions reduce errors
-- **Regulatory compliance**: Standardized approaches for submissions
-- **Maintainability**: Easy to update and improve functions
