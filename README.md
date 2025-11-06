@@ -84,30 +84,44 @@ and regulatory submissions:
 
 ```
 demo-py-esub/
+├── README.md               # Project overview
+├── _quarto.yml             # Quarto project configuration
+├── index.qmd               # Quarto book homepage
 ├── pyproject.toml          # Project configuration and dependencies
 ├── uv.lock                 # Dependency lock file
-├── _quarto.yml             # Quarto book configuration
-├── index.qmd               # Book homepage
-├── analysis/               # Analysis scripts
+├── analysis/               # Analysis documents
 │   ├── tlf-01-disposition.qmd
 │   ├── tlf-02-population.qmd
 │   ├── tlf-03-baseline.qmd
 │   ├── tlf-04-efficacy-ancova.qmd
 │   ├── tlf-05-ae-summary.qmd
 │   └── tlf-06-specific.qmd
-├── data/                   # ADaM datasets
-│   ├── adsl.parquet
+├── data/                   # ADaM datasets (parquet format)
 │   ├── adae.parquet
-│   └── adlbc.parquet
+│   ├── adlbc.parquet
+│   ├── adlbh.parquet
+│   ├── adlbhy.parquet
+│   ├── adsl.parquet
+│   ├── adtte.parquet
+│   └── advs.parquet
 ├── output/                 # Generated TLF outputs
-└── src/                    # Clinical biostatistics package
-    └── demo001/
-        ├── __init__.py     # Package initialization
-        ├── utils.py        # Utility functions
-        ├── population.py   # Population analysis functions
-        ├── baseline.py     # Baseline characteristics functions
-        ├── safety.py       # Safety analysis functions
-        └── efficacy.py     # Efficacy analysis functions
+│   ├── tlf_disposition.rtf
+│   ├── tlf_population.rtf
+│   ├── tlf_baseline.rtf
+│   ├── tlf_efficacy_ancova.rtf
+│   ├── tlf_ae_summary.rtf
+│   └── tlf_ae_specific.rtf
+├── src/                    # Clinical biostatistics Python package
+│   └── demo001/
+│       ├── __init__.py     # Package initialization
+│       ├── baseline.py     # Baseline characteristics functions
+│       ├── efficacy.py     # Efficacy analysis functions
+│       ├── population.py   # Population analysis functions
+│       ├── safety.py       # Safety analysis functions
+│       └── utils.py        # Shared utilities
+└── tests/                  # Automated test suite
+    ├── __init__.py
+    └── test_utils.py
 ```
 
 ## Features
