@@ -228,14 +228,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="bfc013ed" class="cell" data-execution_count="1">
+<div id="81dbf19c" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rtflite <span class="im">as</span> rtf</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> demo001 <span class="im">import</span> find_project_root, load_adam_dataset</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> demo001.baseline <span class="im">import</span> create_baseline_table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="024cd394" class="cell" data-execution_count="2">
+<div id="ae4b6cc4" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>polars.config.Config</code></pre>
 </div>
@@ -243,7 +243,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-1-load-data" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="step-1-load-data"><span class="header-section-number">3.1</span> Step 1: Load Data</h2>
 <p>We start by loading the Subject-level Analysis Dataset (ADSL) and filtering to the safety population.</p>
-<div id="2d9bb8ca" class="cell" data-execution_count="3">
+<div id="f5e60b72" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load data using demo001 utility functions</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>project_root <span class="op">=</span> find_project_root()</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>adsl <span class="op">=</span> (</span>
@@ -330,7 +330,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-2-create-baseline-characteristics-table" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="step-2-create-baseline-characteristics-table"><span class="header-section-number">3.2</span> Step 2: Create Baseline Characteristics Table</h2>
 <p>Using the demo001 package, we create a comprehensive baseline characteristics table with both continuous and categorical variables.</p>
-<div id="86a27f5b" class="cell" data-execution_count="4">
+<div id="4c5289e6" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define variables to include in baseline table</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>continuous_vars <span class="op">=</span> [<span class="st">"AGE"</span>]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>categorical_vars <span class="op">=</span> [<span class="st">"SEX"</span>, <span class="st">"RACE"</span>]</span>
@@ -415,7 +415,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-3-generate-publication-ready-output" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="step-3-generate-publication-ready-output"><span class="header-section-number">3.3</span> Step 3: Generate Publication-Ready Output</h2>
 <p>Finally, we format the baseline table for regulatory submission using the <code>rtflite</code> package.</p>
-<div id="95d6671e" class="cell" data-execution_count="5">
+<div id="a7d100d6" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get treatment group sizes for column headers</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>treatment_n <span class="op">=</span> adsl.group_by(<span class="st">"TRT01P"</span>).<span class="bu">len</span>().sort(<span class="st">"TRT01P"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>n_placebo <span class="op">=</span> treatment_n.<span class="bu">filter</span>(pl.col(<span class="st">"TRT01P"</span>) <span class="op">==</span> <span class="st">"Placebo"</span>)[<span class="st">"len"</span>][<span class="dv">0</span>]</span>
