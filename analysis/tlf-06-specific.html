@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3d497cff885f6278d37568d0ef0763f8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -234,19 +234,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="setup" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">6.1</span> Setup</h2>
-<div id="466f99c2" class="cell" data-execution_count="1">
+<div id="548bcc8a" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rtflite <span class="im">as</span> rtf</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> demo001 <span class="im">import</span> find_project_root, load_adam_dataset</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> demo001.safety <span class="im">import</span> create_ae_by_soc_table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="d3c8ce6a" class="cell" data-execution_count="2">
+<div id="24611ea9" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>polars.config.Config</code></pre>
 </div>
 </div>
-<div id="a7e87ee2" class="cell" data-execution_count="3">
+<div id="07a167bb" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load data using demo001 utility functions</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>project_root <span class="op">=</span> find_project_root()</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>adsl <span class="op">=</span> load_adam_dataset(<span class="st">"adsl"</span>, project_root)</span>
@@ -257,7 +257,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-1-load-and-explore-data" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="step-1-load-and-explore-data"><span class="header-section-number">6.2</span> Step 1: Load and Explore Data</h2>
 <p>We start by examining the adverse events data structure and understanding the MedDRA hierarchy.</p>
-<div id="fb0c9636" class="cell" data-execution_count="4">
+<div id="a6a28809" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display key variables in ADAE dataset</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>adae_vars <span class="op">=</span> adae.select([<span class="st">"USUBJID"</span>, <span class="st">"TRTA"</span>, <span class="st">"AEBODSYS"</span>, <span class="st">"AEDECOD"</span>, <span class="st">"AESEV"</span>, <span class="st">"AESER"</span>])</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Key ADAE variables</span></span>
@@ -344,7 +344,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="3c19b6f6" class="cell" data-execution_count="5">
+<div id="1fb94e4a" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Examine the MedDRA hierarchy structure</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># System Organ Classes (SOCs) in the data</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>soc_summary <span class="op">=</span> adae.group_by(<span class="st">"AEBODSYS"</span>).agg(</span>
@@ -414,7 +414,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-2-prepare-analysis-population" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="step-2-prepare-analysis-population"><span class="header-section-number">6.3</span> Step 2: Prepare Analysis Population</h2>
 <p>Following regulatory standards, we focus on the safety analysis population.</p>
-<div id="ca5cf7d7" class="cell" data-execution_count="6">
+<div id="310b1430" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define safety population</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>adsl_safety <span class="op">=</span> adsl.<span class="bu">filter</span>(pl.col(<span class="st">"SAFFL"</span>) <span class="op">==</span> <span class="st">"Y"</span>).select([<span class="st">"USUBJID"</span>, <span class="st">"TRT01A"</span>])</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Safety population size</span></span>
@@ -462,7 +462,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="b46ad4d6" class="cell" data-execution_count="7">
+<div id="e0900fb3" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter adverse events to safety population</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>adae_safety <span class="op">=</span> adae.join(adsl_safety, on<span class="op">=</span><span class="st">"USUBJID"</span>, how<span class="op">=</span><span class="st">"inner"</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># AE records in safety population</span></span>
@@ -475,7 +475,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-3-data-preparation-and-standardization" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="step-3-data-preparation-and-standardization"><span class="header-section-number">6.4</span> Step 3: Data Preparation and Standardization</h2>
 <p>We standardize the adverse event terms and prepare the hierarchical data structure.</p>
-<div id="4636aff4" class="cell" data-execution_count="8">
+<div id="a6b61b57" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create hierarchical AE table using demo001 safety functions</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df_ae_specific <span class="op">=</span> create_ae_by_soc_table(adae_safety, pop_counts, treatments)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -552,7 +552,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-4-create-regulatory-compliant-rtf-output" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="step-4-create-regulatory-compliant-rtf-output"><span class="header-section-number">6.5</span> Step 4: Create Regulatory-Compliant RTF Output</h2>
 <p>We format the table following regulatory submission standards with proper hierarchy and formatting.</p>
-<div id="a3e98ebd" class="cell" data-execution_count="9">
+<div id="f6ea0a55" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create comprehensive RTF document</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>doc_ae_specific <span class="op">=</span> rtf.RTFDocument(</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    df<span class="op">=</span>df_ae_specific,</span>
