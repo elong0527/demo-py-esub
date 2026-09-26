@@ -198,7 +198,7 @@ doc_ancova = rtf.RTFDocument(
         [
             rtf.RTFColumnHeader(
                 text=["", "Baseline", "Week 24 (LOCF)", "Change from Baseline", ""],
-                col_rel_width=[3, 2, 2, 3, 2],
+                col_rel_width=[3, 2, 2, 2, 2],
                 text_justification=["l", "c", "c", "c", "c"],
                 text_format="b"
             ),
